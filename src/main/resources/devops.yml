@@ -1,0 +1,15 @@
+management:
+  endpoint:
+    health:
+      show-details: always
+
+resilience4j.circuitbreaker:
+  instances:
+    commentsApi:
+      registerHealthIndicator: true
+      slidingWindowSize: 8
+      minimumNumberOfCalls: 4
+
+#logging.level.io.github.resilience4j=DEBUG
+management.health.circuitbreakers.enabled: true
+management.health.ratelimiters.enabled: true
