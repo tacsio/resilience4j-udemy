@@ -7,12 +7,14 @@ import io.tacsio.publication.mapper.PublicationMapper;
 import io.tacsio.publication.repository.PublicationRepository;
 import io.tacsio.publication.repository.entity.PublicationEntity;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class PublicationService {
 
@@ -31,11 +33,17 @@ public class PublicationService {
             .toList();
     }
 
-    @CircuitBreaker(name = "commentsApi")
+    @CircuitBreaker(name = "commentsApi", fallbackMethod = "findByIdFallback")
     public Optional<Publication> findById(String id) {
         return publicationRepository.findById(id)
             .map(publicationMapper::to)
             .map(this::loadComments);
+    }
+
+    private Optional<Publication> findByIdFallback(String id, Throwable cause) {
+        log.warn("Fallback id: {}.  {}", id, cause.getClass().getName());
+
+        throw new RuntimeException("Serviço comments indisponível");
     }
 
     private Publication loadComments(Publication publication) {
