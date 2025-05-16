@@ -1,3 +1,5 @@
+spring.output.ansi.enabled: ALWAYS
+
 management:
   endpoint:
     health:
@@ -8,7 +10,11 @@ resilience4j.circuitbreaker:
     commentsApi:
       registerHealthIndicator: true
       slidingWindowSize: 8
-      minimumNumberOfCalls: 4
+#      minimumNumberOfCalls: 4
+      slowCallDurationThreshold: 2_000
+      slowCallRateThreshold: 50
+#      permittedNumberOfCallsInHalfOpenState: 2
+#      waitDurationInOpenState: 10_000
 
 #logging.level.io.github.resilience4j=DEBUG
 management.health.circuitbreakers.enabled: true

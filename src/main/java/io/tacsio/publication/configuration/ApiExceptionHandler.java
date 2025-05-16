@@ -23,7 +23,7 @@ public class ApiExceptionHandler {
         problemDetail.setInstance(URI.create(request.getRequestURI()));
         problemDetail.setProperties(properties);
 
-        log.error(request.getRequestURI(), exception);
+        log.debug(request.getRequestURI(), exception);
 
         return problemDetail;
     }
@@ -35,7 +35,7 @@ public class ApiExceptionHandler {
         var problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage());
         problemDetail.setProperties(properties);
 
-        log.error(exception.getMessage());
+        log.debug(exception.getMessage(), exception);
 
         return problemDetail;
     }
