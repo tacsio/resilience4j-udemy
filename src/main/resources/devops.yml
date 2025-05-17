@@ -14,7 +14,7 @@ resilience4j.circuitbreaker:
       slowCallDurationThreshold: 2_000
       slowCallRateThreshold: 50
 #      permittedNumberOfCallsInHalfOpenState: 2
-#      waitDurationInOpenState: 10_000
+      waitDurationInOpenState: 10_000
 
 #logging.level.io.github.resilience4j=DEBUG
 management.health.circuitbreakers.enabled: true

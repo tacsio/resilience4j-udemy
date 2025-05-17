@@ -1,11 +1,8 @@
 package io.tacsio.publication.service;
 
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
-import io.tacsio.publication.client.CommentClient;
 import io.tacsio.publication.domain.Publication;
 import io.tacsio.publication.mapper.PublicationMapper;
 import io.tacsio.publication.repository.PublicationRepository;
-import io.tacsio.publication.repository.entity.PublicationEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,7 +17,7 @@ public class PublicationService {
 
     private final PublicationRepository publicationRepository;
     private final PublicationMapper publicationMapper;
-    private final CommentClient commentClient;
+    private final CommentService commentService;
 
     public void insert(Publication publication) {
         var entity = publicationMapper.to(publication);
@@ -33,21 +30,16 @@ public class PublicationService {
             .toList();
     }
 
-    @CircuitBreaker(name = "commentsApi", fallbackMethod = "findByIdFallback")
+
     public Optional<Publication> findById(String id) {
         return publicationRepository.findById(id)
             .map(publicationMapper::to)
             .map(this::loadComments);
     }
 
-    private Optional<Publication> findByIdFallback(String id, Throwable cause) {
-        log.warn("Fallback id: {}.  {}", id, cause.getClass().getName());
-
-        throw new RuntimeException("Serviço comments indisponível");
-    }
 
     private Publication loadComments(Publication publication) {
-        var comments = commentClient.getComments(publication.getId());
+        var comments = commentService.getComments(publication.getId());
         publication.setComments(comments);
 
         return publication;
